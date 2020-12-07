@@ -16,26 +16,26 @@ namespace newAquarium
 		Timer timer = new Timer();
 		static int scroll=2;
 		int tic = 0;
-		public static int _Scroll { get { return scroll; } set { if (value >= 1) scroll = value; } } 
+		public static int _Scroll { get { return scroll; } set { if (value >= 1&&value<4) scroll = value; } } 
 		PictureBox box;
 		bool fullScreen = false;
-		public static Random random = new Random();
+		public static Random random = new Random();//Так последовательно не идут одни и теже цифры
+		Size size_box;
 		public Form1()
 		{
 			InitializeComponent();
 			 box = new PictureBox()
 			{
-				Image = newAquarium.Properties.Resources.back,
+				Image = newAquarium.Properties.Resources.aquarium,
 				SizeMode = PictureBoxSizeMode.StretchImage,
 				Size = ClientSize = new Size(900, 400)
 			};
 			Controls.Add(box);
-			this.BackgroundImage = newAquarium.Properties.Resources.back;
-
+			this.Text = "Мышь : левая-кормить правая-рыбки ";
 			box.ContextMenuStrip = contextMenuStrip1;
 			box.MouseClick += Box_MouseClick;
 
-			timer.Interval = 10;
+			timer.Interval = 1;
 			timer.Start();
 			timer.Tick += Timer_Tick;
 
@@ -45,14 +45,12 @@ namespace newAquarium
 
 		private void Timer_Tick(object sender, EventArgs e)
 		{
-		
-			
 				tic++;
 				foreach (var item in Fishs)
 				{
 					item.Move();
-					if (tic % 1000 == 0)item.SpeedRand();
 				}
+			box.Invalidate();
 			
 		}
 
@@ -63,7 +61,10 @@ namespace newAquarium
 				WindowState = FormWindowState.Maximized;
 				FormBorderStyle = FormBorderStyle.None;
 				fullScreen = true;
+				size_box = box.Size;
 				box.Size = new Size(this.Size.Width, this.Size.Height);
+				//foreach (var item in Fishs)
+					//item.Picture.Size = new Size(item.Picture.Size.Width * 2, item.Picture.Size.Height * 2);
 			}
 			else
 			{
@@ -71,24 +72,32 @@ namespace newAquarium
 				FormBorderStyle = FormBorderStyle.Sizable;
 				fullScreen = false;
 				box.Size = new Size(this.Size.Width, this.Size.Height);
+				int width = SystemInformation.PrimaryMonitorSize.Width / size_box.Width;
+				int height = SystemInformation.PrimaryMonitorSize.Height / size_box.Height;
+
+				foreach (var item in Fishs)
+					item.Picture.Location = new Point(item.Picture.Location.X / width, item.Picture.Location.Y / height);
+
 			}
 		}
 
 		private void Box_MouseWheel(object sender, MouseEventArgs e)
 		{
 			
-			if(e.Delta>0)
-			this.Text = scroll++.ToString();
-			else this.Text = scroll--.ToString();
+			if(e.Delta>0&&scroll<4)
+			this.Text = "Мышь: левая - кормить правая - рыбки скролл - турбо :x" + scroll++.ToString();
+			if(e.Delta<0)
+				if(scroll > 1)
+			this.Text = "Мышь: левая - кормить правая - рыбки скролл - турбо :x" + scroll--.ToString();
 		}
 
 		private void Box_MouseClick(object sender, MouseEventArgs e)
 		{
-			box.Focus();
+			//box.Focus();
 			if (e.Button == MouseButtons.Right)
 				contextMenuStrip1.Show();
-			if (e.Button == MouseButtons.Middle)
-				this.Text = scroll++.ToString();
+			//if (e.Button == MouseButtons.Middle)
+			//	this.Text = "Мышь: левая - кормить правая - рыбки скролл - турбо :x" + scroll--.ToString();
 		}
 
 		private void toolStripMenuItemAdd_Click(object sender, EventArgs e)

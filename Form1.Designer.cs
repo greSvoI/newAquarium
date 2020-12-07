@@ -47,21 +47,21 @@ namespace newAquarium
 			// toolStripMenuItemAdd
 			// 
 			this.toolStripMenuItemAdd.Name = "toolStripMenuItemAdd";
-			this.toolStripMenuItemAdd.Size = new System.Drawing.Size(180, 22);
+			this.toolStripMenuItemAdd.Size = new System.Drawing.Size(126, 22);
 			this.toolStripMenuItemAdd.Text = "Добавить";
 			this.toolStripMenuItemAdd.Click += new System.EventHandler(this.toolStripMenuItemAdd_Click);
 			// 
 			// toolStripMenuItemRemove
 			// 
 			this.toolStripMenuItemRemove.Name = "toolStripMenuItemRemove";
-			this.toolStripMenuItemRemove.Size = new System.Drawing.Size(180, 22);
+			this.toolStripMenuItemRemove.Size = new System.Drawing.Size(126, 22);
 			this.toolStripMenuItemRemove.Text = "Удалить";
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(984, 420);
+			this.ClientSize = new System.Drawing.Size(484, 561);
 			this.Name = "Form1";
 			this.Text = "Form1";
 			this.contextMenuStrip1.ResumeLayout(false);

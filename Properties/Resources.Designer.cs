@@ -93,6 +93,16 @@ namespace newAquarium.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap aquarium {
+            get {
+                object obj = ResourceManager.GetObject("aquarium", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap back {
             get {
                 object obj = ResourceManager.GetObject("back", resourceCulture);
@@ -106,6 +116,16 @@ namespace newAquarium.Properties {
         internal static System.Drawing.Bitmap fish {
             get {
                 object obj = ResourceManager.GetObject("fish", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap mir_pod_vodoy {
+            get {
+                object obj = ResourceManager.GetObject("mir_pod_vodoy", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

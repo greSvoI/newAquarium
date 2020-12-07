@@ -14,10 +14,12 @@ namespace newAquarium
 	{
 		List<Fish> Fishs=new List<Fish>();
 		Timer timer = new Timer();
-		static int scroll=1;
+		static int scroll=2;
+		int tic = 0;
 		public static int _Scroll { get { return scroll; } set { if (value >= 1) scroll = value; } } 
 		PictureBox box;
 		bool fullScreen = false;
+		public static Random random = new Random();
 		public Form1()
 		{
 			InitializeComponent();
@@ -28,20 +30,12 @@ namespace newAquarium
 				Size = ClientSize = new Size(900, 400)
 			};
 			Controls.Add(box);
-
+			this.BackgroundImage = newAquarium.Properties.Resources.back;
 			
 
-			Fishs.Add(new Fish());
-			Fishs.Add(new Fish());
-			Fishs.Add(new Fish());
-			Fishs.Add(new Fish());
-
-			foreach (var item in Fishs)
-			{ box.Controls.Add(item.Picture);item.Locate(); }
-
 			//box.Controls.Add(new Fish().Picture);
 			//box.Controls.Add(new Fish().Picture);
-			//box.Controls.Add(new Fish().Picture);
+		    //box.Controls.Add(new Fish().Picture);
 			//box.Controls.Add(new Fish().Picture);
 
 
@@ -53,8 +47,11 @@ namespace newAquarium
 			timer.Start();
 			timer.Tick += (s, e) =>
 			  {
+				  tic++;
 				  foreach (var item in Fishs)
-					  item.Move();
+				  { item.Move();
+					 if(tic%1000==0) item.SpeedRand();
+					  }
 			  };
 
 			box.MouseWheel += Box_MouseWheel;
@@ -94,6 +91,13 @@ namespace newAquarium
 				contextMenuStrip1.Show();
 			if (e.Button == MouseButtons.Middle)
 				this.Text = scroll++.ToString();
+		}
+
+		private void toolStripMenuItemAdd_Click(object sender, EventArgs e)
+		{
+			Fishs.Add(new Fish());
+			foreach (var item in Fishs)
+				box.Controls.Add(item.Picture);
 		}
 	}
 }

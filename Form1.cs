@@ -31,31 +31,29 @@ namespace newAquarium
 			};
 			Controls.Add(box);
 			this.BackgroundImage = newAquarium.Properties.Resources.back;
-			
-
-			//box.Controls.Add(new Fish().Picture);
-			//box.Controls.Add(new Fish().Picture);
-		    //box.Controls.Add(new Fish().Picture);
-			//box.Controls.Add(new Fish().Picture);
-
-
 
 			box.ContextMenuStrip = contextMenuStrip1;
 			box.MouseClick += Box_MouseClick;
 
-			timer.Interval = 1;
+			timer.Interval = 10;
 			timer.Start();
-			timer.Tick += (s, e) =>
-			  {
-				  tic++;
-				  foreach (var item in Fishs)
-				  { item.Move();
-					 if(tic%1000==0) item.SpeedRand();
-					  }
-			  };
+			timer.Tick += Timer_Tick;
 
 			box.MouseWheel += Box_MouseWheel;
 			box.MouseDoubleClick += Box_MouseDoubleClick;
+		}
+
+		private void Timer_Tick(object sender, EventArgs e)
+		{
+		
+			
+				tic++;
+				foreach (var item in Fishs)
+				{
+					item.Move();
+					if (tic % 1000 == 0)item.SpeedRand();
+				}
+			
 		}
 
 		private void Box_MouseDoubleClick(object sender, MouseEventArgs e)

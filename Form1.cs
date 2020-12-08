@@ -13,14 +13,15 @@ namespace newAquarium
 	public partial class Form1 : Form
 	{
 		List<Fish> Fishs=new List<Fish>();
+		List<Food> foods = new List<Food>();
 		Timer timer = new Timer();
 		static int scroll=2;
-		int tic = 0;
 		public static int _Scroll { get { return scroll; } set { if (value >= 1&&value<4) scroll = value; } } 
-		PictureBox box;
+		public static PictureBox box;
 		bool fullScreen = false;
+		bool IsFood = false;
 		public static Random random = new Random();//Так последовательно не идут одни и теже цифры
-		Size size_box;
+		Size size_box;//Смещение рыбок при возврате с полного экрана
 		public Form1()
 		{
 			InitializeComponent();
@@ -45,11 +46,18 @@ namespace newAquarium
 
 		private void Timer_Tick(object sender, EventArgs e)
 		{
-				tic++;
 				foreach (var item in Fishs)
 				{
 					item.Move();
+					FoodFish();
 				}
+			for (int i = 0; i < foods.Count; i++)
+			{
+				if (foods[i].Beyond)
+					foods[i].Move();
+				else foods.RemoveAt(i);
+			}
+			this.Text = foods.Count.ToString();
 			box.Invalidate();
 			
 		}
@@ -77,10 +85,10 @@ namespace newAquarium
 
 				foreach (var item in Fishs)
 					item.Picture.Location = new Point(item.Picture.Location.X / width, item.Picture.Location.Y / height);
-
+				
 			}
 		}
-
+		/// <summary> отключено  </summary>
 		private void Box_MouseWheel(object sender, MouseEventArgs e)
 		{
 			
@@ -96,6 +104,12 @@ namespace newAquarium
 			//box.Focus();
 			if (e.Button == MouseButtons.Right)
 				contextMenuStrip1.Show();
+			if(e.Button==MouseButtons.Left)
+			{
+				IsFood = true;
+				if(foods.Count<5)
+				foods.Add(new Food(e.X));
+			}
 			//if (e.Button == MouseButtons.Middle)
 			//	this.Text = "Мышь: левая - кормить правая - рыбки скролл - турбо :x" + scroll--.ToString();
 		}
@@ -105,6 +119,38 @@ namespace newAquarium
 			Fishs.Add(new Fish());
 			foreach (var item in Fishs)
 				box.Controls.Add(item.Picture);
+		}
+		private void FoodFish()
+		{
+			try
+			{
+
+
+				for (int i = 0; i < foods.Count; i++)
+				{
+					foreach (var item in Fishs)
+					{
+						if (i<foods.Count)
+						{
+							if (IsFood)
+							{
+								item.Xx = item.Picture.Location.X < foods[i].Location.X ? item.Xx = 2 : item.Xx = -2;
+								item.Yy = item.Yy < foods[i].Location.Y ? item.Yy = -2 : item.Yy = 2;
+								
+							}
+							double collis = Math.Sqrt(Math.Pow(item.Picture.Location.X - foods[i].Location.X, 2) + Math.Pow(item.Picture.Location.Y - foods[i].Location.Y, 2));
+							if (collis < 50)
+							{
+								foods[i].Dispose();
+								foods.RemoveAt(i);
+							}
+						}
+					}
+					IsFood = false;
+				}
+			}
+			catch (Exception ex) { MessageBox.Show("FoodFish\n\r" + ex.Message); }
+
 		}
 	}
 }

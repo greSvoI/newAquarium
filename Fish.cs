@@ -27,14 +27,14 @@ namespace newAquarium
 			} 
 		}
 		private int x, y;
-		int Xx { get { return x; } 
+		public int Xx { get { return x; } 
 			set {
 
 				Rotate = x < 0 ? Rotate = false : Rotate = true;
 				x = value;
 			}
 		}
-		int Yy { get => y; set { y = value; } }
+		public int Yy { get => y; set { y = value; } }
 		public Fish()
 		{
 			Picture = new PictureBox()

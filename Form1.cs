@@ -1,37 +1,43 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace newAquarium
 {
 	public partial class Form1 : Form
 	{
+		
 		List<Fish> Fishs=new List<Fish>();
 		List<Food> foods = new List<Food>();
 		Timer timer = new Timer();
 		static int scroll=2;
-		public static int _Scroll { get { return scroll; } set { if (value >= 1&&value<4) scroll = value; } } 
+		public static int _Scroll { get { return scroll; } set { if (value >= 1&&value<4) scroll = value; } } //отключено
 		public static PictureBox box;
 		bool fullScreen = false;
 		bool IsFood = false;
-		public static Random random = new Random();//Так последовательно не идут одни и теже цифры
+		public static Random random = new Random();//Меньше варианта повтора
 		Size size_box;//Смещение рыбок при возврате с полного экрана
+		static SqliteConnection conn = new SqliteConnection();
+		static SqliteCommand command = new SqliteCommand();
+		static void Conn()
+		{
+			conn.ConnectionString = ConfigurationManager.ConnectionStrings["Fish"].ConnectionString;
+			command.Connection = conn;
+		}
 		public Form1()
 		{
 			InitializeComponent();
-			 box = new PictureBox()
-			{
-				Image = newAquarium.Properties.Resources.aquarium,
-				SizeMode = PictureBoxSizeMode.StretchImage,
-				Size = ClientSize = new Size(900, 400)
-			};
+			Conn();
+			box = LoadFish(1);
+			box.Size = ClientSize = new Size(900, 450);
+			box.SizeMode = PictureBoxSizeMode.StretchImage;
 			Controls.Add(box);
+
 			this.Text = "Мышь : левая-кормить правая-рыбки ";
 			box.ContextMenuStrip = contextMenuStrip1;
 			box.MouseClick += Box_MouseClick;
@@ -57,7 +63,6 @@ namespace newAquarium
 					foods[i].Move();
 				else foods.RemoveAt(i);
 			}
-			this.Text = foods.Count.ToString();
 			box.Invalidate();
 			
 		}
@@ -116,7 +121,9 @@ namespace newAquarium
 
 		private void toolStripMenuItemAdd_Click(object sender, EventArgs e)
 		{
-			Fishs.Add(new Fish());
+			int index = random.Next(2, 6);
+
+			Fishs.Add(new Fish(LoadFish(index)));
 			foreach (var item in Fishs)
 				box.Controls.Add(item.Picture);
 		}
@@ -124,8 +131,6 @@ namespace newAquarium
 		{
 			try
 			{
-
-
 				for (int i = 0; i < foods.Count; i++)
 				{
 					foreach (var item in Fishs)
@@ -152,5 +157,62 @@ namespace newAquarium
 			catch (Exception ex) { MessageBox.Show("FoodFish\n\r" + ex.Message); }
 
 		}
+		private PictureBox LoadFish(int index)
+		{
+
+			conn.Open();
+			PictureBox picture = new PictureBox();
+			try
+			{
+					
+					using (command = new SqliteCommand($"SELECT png FROM Fish WHERE Id =={index}", conn))
+					{
+						var reader = command.ExecuteReader();
+						while (reader.Read())
+						{
+							byte[] bytes = (System.Byte[])reader[0];
+							MemoryStream ms = new MemoryStream(bytes, 0, bytes.Length);
+							ms.Write(bytes, 0, bytes.Length);
+							picture.Image = new Bitmap(ms);
+						}
+
+					
+					}
+				return picture;
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+			conn.Close();
+			return null;
+		}
+		private void LoadDBFish()
+		{
+			PictureBox picture = new PictureBox();
+			conn.Open();
+			//using (SqliteCommand command = new SqliteCommand("CREATE TABLE Fish(Id INTEGER PRIMARY KEY AUTOINCREMENT, png BLOB);", conn))
+			//{
+			//	command.ExecuteNonQuery();
+			//}
+			OpenFileDialog dialog = new OpenFileDialog();
+			if (dialog.ShowDialog() == DialogResult.OK)
+			{
+					picture.Image = Image.FromFile(dialog.FileName);
+					MemoryStream ms = new MemoryStream();
+					picture.Image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+					var buf = ms.ToArray();
+			using (SqliteCommand command = new SqliteCommand("INSERT INTO Fish(png) VALUES(@png)", conn))
+			{
+					command.Parameters.Add("@png",(SqliteType)DbType.Binary).Value = buf;
+					command.ExecuteNonQuery();
+			}
+				
+				conn.Close();
+			}
+
+		}
 	}
 }
+	
+

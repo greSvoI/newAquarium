@@ -35,15 +35,20 @@ namespace newAquarium
 			}
 		}
 		public int Yy { get => y; set { y = value; } }
-		public Fish()
+		public Fish(PictureBox picture)
 		{
-			Picture = new PictureBox()
-			{
-				Image = Properties.Resources.new2,
-				SizeMode = PictureBoxSizeMode.Zoom,
-				Size = new Size(90, 45),
-				BackColor = Color.Transparent
-			};
+			Picture = picture;
+			picture.Size = new Size(90, 45);
+			picture.SizeMode = PictureBoxSizeMode.Zoom;
+			picture.BackColor = Color.Transparent;
+
+			//Picture = new PictureBox()
+			//{
+			//	Image = Properties.Resources.new1,
+			//	SizeMode = PictureBoxSizeMode.Zoom,
+			//	Size = new Size(90, 45),
+			//	BackColor = Color.Transparent
+			//};
 		    Xx = Form1.random.Next(0, 2) == 0 ? x = -1 : x = 1;
 			Yy = Form1.random.Next(0, 2) == 0 ? y = -1 : y = 1;
 			

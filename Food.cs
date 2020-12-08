@@ -25,7 +25,7 @@ namespace newAquarium
 		private void Back_Paint(object sender, PaintEventArgs e)
 		{
 			for (int i = 1; i < points.Length; ++i)
-				e.Graphics.FillEllipse(Brushes.Orange, points[i].X, points[i].Y, 7, 7);
+				e.Graphics.FillEllipse(Brushes.Brown, points[i].X, points[i].Y, 7, 7);
 		}
 		public void Move()
 		{
